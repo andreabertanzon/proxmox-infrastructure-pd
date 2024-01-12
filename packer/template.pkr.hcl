@@ -46,6 +46,7 @@ source "proxmox-iso" "example" {
   username      = var.proxmox_token_id
   token         = var.proxmox_api_token_secret
   node          = var.node
+  vm_name       = "debian-12-template"
   vm_id         = "800"
   iso_file      = "local:iso/debian-12.4.0-amd64-netinst.iso"
   ssh_username  = "debian"
