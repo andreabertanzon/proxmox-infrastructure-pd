@@ -90,5 +90,20 @@ build {
   sources = [
     "source.proxmox-iso.example"
   ]
+
+  // run scripts on the VM using scripts from /scripts directory
+  provisioner "file" {
+    source      = "./scripts"
+    destination = "/tmp"
+  }
+
+  provisioner "shell" {
+    inline = [
+      "chmod +x /tmp/scripts/*",
+      "sudo /tmp/scripts/1-containers.sh",
+      "sudo /tmp/scripts/2-cri-o.sh",
+      "sudo /tmp/scripts/3-install-kubeadm.sh",
+    ]
+  }
 }
 
