@@ -15,8 +15,8 @@ source "proxmox-iso" "example" {
   username      = var.proxmox_token_id
   token         = var.proxmox_api_token_secret
   node          = var.node
-  vm_name       = "debian-12-template"
-  vm_id         = "800"
+  vm_name       = "minio-template"
+  vm_id         = "799"
   iso_file      = "local:iso/debian-12.4.0-amd64-netinst.iso"
   ssh_username  = "debian"
   ssh_password  = "debian"
@@ -43,7 +43,7 @@ source "proxmox-iso" "example" {
   memory        = 4096
  
   disks {
-    disk_size = "20G"
+    disk_size = "50G"
     storage_pool = "local-lvm"
     type = "virtio"
   }
@@ -66,12 +66,21 @@ build {
     destination = "/tmp"
   }
 
+  provisioner "file" {
+    source = "./extra"
+    destination = "/tmp/extra"
+  }
+
   provisioner "shell" {
     inline = [
       "chmod +x /tmp/scripts/*",
-      "sudo /tmp/scripts/1-containers.sh",
-      "sudo /tmp/scripts/2-cri-o.sh",
-      "sudo /tmp/scripts/3-install-kubeadm.sh",
+      "ls -la /tmp/scripts",
+      "ls -la /tmp/extra",
+      "sudo cp /tmp/extra/minio /etc/default/minio",
+      "sudo /tmp/scripts/1-minio-server.sh",
+      "sudo /tmp/scripts/2-minio-user.sh",
+      "sudo systemctl start minio.service",
+      "sudo systemctl enable minio.service",
     ]
   }
 }
