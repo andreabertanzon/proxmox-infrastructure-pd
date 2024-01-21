@@ -22,7 +22,7 @@ resource "proxmox_vm_qemu" "minio-dev" {
     bridge = "vmbr1"
   }
   os_type   = "cloud-init"
-  ipconfig0 = "ip=10.1.1.1/24,gw=10.1.1.255" // Replace YOUR_GATEWAY_IP with your actual gateway IP
+  ipconfig0 = "ip=10.1.1.1/24,gw=10.1.1.254" // Replace YOUR_GATEWAY_IP with your actual gateway IP
 
   # VM Advanced General Settings
   onboot = true
@@ -48,10 +48,10 @@ resource "proxmox_vm_qemu" "minio-dev" {
   provisioner "remote-exec" {
     
     inline = [
-      "ip a"
+      "sudo mkdir -p ~/minio/data",
+      "sudo docker run -d --restart always -p 9000:9000 -p 9001:9001 --name minio -v ~/minio/data:/data -e 'MINIO_ROOT_USER=ROOTNAME' -e 'MINIO_ROOT_PASSWORD=CHANGEME123' quay.io/minio/minio:RELEASE.2024-01-18T22-51-28Z-cpuv1 server /data --console-address ':9001'"
     ]
   }
-
 }
 
 // Optionally, you can add Terraform outputs to retrieve the IP address
