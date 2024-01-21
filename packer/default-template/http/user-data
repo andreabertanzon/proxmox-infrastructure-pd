@@ -1,0 +1,34 @@
+#cloud-config
+autoinstall:
+  version: 1
+  locale: en_US
+  keyboard:
+    layout: us
+  ssh:
+    install-server: true
+    allow-pw: true
+    disable_root: true
+    ssh_quiet_keygen: true
+    allow_public_ssh_keys: true
+  packages:
+    - qemu-guest-agent
+    - sudo
+    - curl
+  storage:
+    layout:
+      name: direct
+    swap:
+      size: 0
+  user-data:
+    package_upgrade: false
+    timezone: Europe/Berlin
+    users:
+      - name: debian
+        groups: [adm, sudo]
+        lock-passwd: false
+        sudo: ALL=(ALL) NOPASSWD:ALL
+        shell: /bin/bash
+        passwd: $6$wBpF2F31DLJgZnoS$CgSTbE2GmWfgW0hCalnS1vurp7ZBWS2HCRRMqXLfZQ10yvPoI547lJgvibwp6ix0aokYJ72LMtMZasjGrxxa21
+        # - or -
+        # ssh_authorized_keys:
+        #   - your-ssh-key
