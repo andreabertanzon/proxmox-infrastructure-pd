@@ -102,7 +102,7 @@ source "proxmox" "ubuntu-server-jammy" {
 # Build Definition to create the VM Template
 build {
 
-    name = "ubuntu-server-jammy"
+    name = "k8s-master-jammy"
     sources = ["source.proxmox.ubuntu-server-jammy"]
 
     # Provisioning the VM Template for Cloud-Init Integration in Proxmox #1
@@ -127,6 +127,11 @@ build {
         destination = "/tmp/99-pve.cfg"
     }
 
+    provisioner "file" {
+        source = "files/install-kube.sh"
+        destination = "/tmp/install-kube.sh"
+    }
+
     # Provisioning the VM Template for Cloud-Init Integration in Proxmox #3
     provisioner "shell" {
         inline = [ "sudo cp /tmp/99-pve.cfg /etc/cloud/cloud.cfg.d/99-pve.cfg" ]
@@ -140,6 +145,13 @@ build {
             "echo \"deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable\" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null",
             "sudo apt-get -y update",
             "sudo apt-get install -y docker-ce docker-ce-cli containerd.io"
+        ]
+    }
+
+    provisioner "shell" {
+        inline = [
+            "sudo chmod +x /tmp/install-kube.sh",
+            "sudo /tmp/install-kube.sh"
         ]
     }
 }
