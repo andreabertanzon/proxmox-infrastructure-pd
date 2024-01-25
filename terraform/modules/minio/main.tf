@@ -7,7 +7,6 @@ terraform {
   }
 }
 
-
 provider "proxmox" {
   pm_api_url = var.proxmox_api_url
 }
@@ -37,6 +36,12 @@ resource "proxmox_vm_qemu" "minio-dev" {
   cores   = 1
   sockets = 1
   cpu     = "host"
+
+  disk {
+    storage = "local-lvm"
+    type = "virtio"
+    size = "50G"
+  }
 
   # VM Memory Settings
   memory = 1024
